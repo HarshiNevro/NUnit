@@ -1,28 +1,25 @@
-version: 1.0.0.{build}.{branch}
+name: .NET
 
-nuget:
-  account_feed: true
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: 4.6.1
+    - name: Restore dependencies
+      working directory: /.src
+       run: dotnet build --no-restore
+      working directory: /.src
+      run: dotnet test --no-build --verbosity normal
   
-init:
- - git config --global core.autocrlf true
- 
-cache:
-  - '%APPDATA%\npm-cache'             # npm cache
-  
-install:
- - cmd: nuget sources add -Name api.nuget.org -Source https://api.nuget.org/v3/index.json
- 
-before_build:
- - cmd: npm install gulp bower -g
-
-build_script:
- - cmd: dotnet restore ./src/WilderMinds.MetaWeblog
- - cmd: dotnet restore ./src/WilderMinds.MetaWeblog.Tests
- - cmd: dotnet build ./src/WilderMinds.MetaWeblog
- - cmd: dotnet build ./src/WilderMinds.MetaWeblog.Tests
-
-test_script:
- - ps: cd .\src\WilderMinds.MetaWeblog.Tests
- - cmd: dotnet test 
-
-
